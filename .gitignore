@@ -78,3 +78,6 @@ crashlytics-build.properties
 #FR2Cache
 Assets/FR2_Cache.asset
 Assets/FR2_Cache.asset.meta
+
+#Nuget
+Assets/Packages/
