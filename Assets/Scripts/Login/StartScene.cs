@@ -17,7 +17,6 @@ public class StartScene : MonoBehaviour
         _startButton.onClick.AddListener(OnStartButtonClicked);
         _startButton.gameObject.SetActive(true);
         _progressSlider.gameObject.SetActive(false);
-        // TODO core system initialization
     }
 
     private void OnStartButtonClicked()
