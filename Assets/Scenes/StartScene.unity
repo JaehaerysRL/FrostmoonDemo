@@ -697,37 +697,82 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Frost Moon
-  pulseEnable: 0
+  pulseEnable: 1
   pulseScaleCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.95
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.5
+      value: 1.05
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0.95
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   pulsePosCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  pulseSpeed: 1
+  pulseSpeed: 1.5
   pulsePeriod: 2
-  pulseMoveDistance: 0
-  gradientEnable: 0
+  pulseMoveDistance: 0.2
+  gradientEnable: 1
   gradient:
     serializedVersion: 2
-    key0: {r: 1, g: 0.0141509175, b: 0.0141509175, a: 1}
-    key1: {r: 0.94509804, g: 0.14117646, b: 0.23403092, a: 1}
-    key2: {r: 0.9811321, g: 0.26379493, b: 0.6793233, a: 1}
-    key3: {r: 0, g: 0, b: 0, a: 0}
+    key0: {r: 0.5568628, g: 0.8392157, b: 1, a: 1}
+    key1: {r: 0, g: 1, b: 0.81960785, a: 1}
+    key2: {r: 0.41568628, g: 1, b: 0.4745098, a: 1}
+    key3: {r: 0.98039216, g: 0.2627451, b: 0.83134353, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 0
-    ctime1: 30647
-    ctime2: 65535
-    ctime3: 0
+    ctime0: 13107
+    ctime1: 32768
+    ctime2: 52428
+    ctime3: 65535
     ctime4: 0
     ctime5: 0
     ctime6: 0
@@ -745,31 +790,58 @@ MonoBehaviour:
     m_NumColorKeys: 3
     m_NumAlphaKeys: 2
   gradientType: 3
-  gradientAngle: 0
-  bendEnable: 0
+  gradientAngle: 135
+  bendEnable: 1
   bendCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: -0.3
+      inSlope: 0.6
+      outSlope: 0.6
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5
+      value: 0
+      inSlope: 0.6
+      outSlope: 0.6
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0.3
+      inSlope: 0.6
+      outSlope: 0.6
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  bendOffset: 0
-  shadowEnable: 0
-  shadowOffset: {x: 2, y: -2}
-  shadowLevels: 3
-  shadowColor: {r: 0, g: 0, b: 0, a: 1}
-  shadowAlphaDecay: 0.5
-  glowEnable: 0
-  glowRadius: 1
-  glowLayers: 4
-  glowColor: {r: 255, g: 255, b: 255, a: 0.8}
-  thicknessEnable: 0
-  thickness: 0
-  thicknessColor: {r: 1, g: 1, b: 1, a: 1}
-  outlineEnable: 0
+  bendOffset: 30
+  shadowEnable: 1
+  shadowOffset: {x: 3, y: -2}
+  shadowLevels: 6
+  shadowColor: {r: 0.101960786, g: 0.2, b: 0.3019608, a: 0.8156863}
+  shadowAlphaDecay: 0.6
+  glowEnable: 1
+  glowRadius: 2.5
+  glowLayers: 6
+  glowColor: {r: 0.6, g: 0.9411765, b: 1, a: 0.42352942}
+  thicknessEnable: 1
+  thickness: 0.8
+  thicknessColor: {r: 1, g: 1, b: 1, a: 0.6}
+  outlineEnable: 1
   outlineOffset: 2
   outlineStrength: 4
-  outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  outlineColor: {r: 0.2, g: 0.4, b: 0.49803922, a: 1}
 --- !u!222 &1130609908
 CanvasRenderer:
   m_ObjectHideFlags: 0

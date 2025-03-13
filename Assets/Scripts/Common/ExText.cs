@@ -7,7 +7,7 @@ using UnityEngine.UI;
 #if UNITY_EDITOR
 using UnityEditor;
 [CustomEditor(typeof(ExText))]
-public class JKTextEditor : Editor
+public class ExTextEditor : Editor
 {
     public override void OnInspectorGUI()
     {
