@@ -82,3 +82,6 @@ Assets/FR2_Cache.asset.meta
 #Nuget
 Assets/Packages/
 ProjectSettings/SpriteIntegration/
+
+#ToolResources
+Assets/Tools/Res/
