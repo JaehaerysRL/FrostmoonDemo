@@ -3,19 +3,20 @@ using UnityEngine;
 
 public class SnowLayerAuthoring : MonoBehaviour
 {
-    public float maxThickness = 1.2f;
+    public float initialThickness = 0f;
+    public float accumulationRate = 0.01f;
+    public float meltingRate = 0.002f;
 
     class Baker : Baker<SnowLayerAuthoring>
     {
         public override void Bake(SnowLayerAuthoring authoring)
         {
             var entity = GetEntity(TransformUsageFlags.Dynamic);
-
             AddComponent(entity, new SnowLayer
             {
-                Thickness = 0f,
-                MaxThickness = authoring.maxThickness,
-                VarianceSeed = UnityEngine.Random.Range(0f, 1000f)
+                Thickness = authoring.initialThickness,
+                AccumulationRate = authoring.accumulationRate,
+                MeltingRate = authoring.meltingRate
             });
         }
     }
