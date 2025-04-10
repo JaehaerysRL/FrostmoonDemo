@@ -1,17 +1,13 @@
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
+using Unity.Collections;
 
 public partial struct TerrainGenerateSystem : ISystem
 {
-    private EntityCommandBufferSystem _ecbSystem;
-
     public void OnCreate(ref SystemState state)
     {
-        _ecbSystem = state.World.GetOrCreateSystemManaged<BeginInitializationEntityCommandBufferSystem>();
         state.RequireForUpdate<TerrainGenerationConfig>();
         state.RequireForUpdate<TilePrefabConfig>();
         state.RequireForUpdate<BiomeCenter>();
@@ -20,20 +16,14 @@ public partial struct TerrainGenerateSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        // 获取第一个包含 BiomeCenter 的实体
-        EntityQuery clusterQuery = state.GetEntityQuery(
-            ComponentType.ReadOnly<BiomeCenter>(),
-            ComponentType.ReadOnly<FrozenLakeCenter>()
-        );
-
-        if (clusterQuery.IsEmpty) return;
-        Entity clusterEntity = clusterQuery.GetSingletonEntity();
-        var biomeCenters = state.EntityManager.GetBuffer<BiomeCenter>(clusterEntity);
-        var frozenLakeCenters = state.EntityManager.GetBuffer<FrozenLakeCenter>(clusterEntity);
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
 
         var generationConfig = SystemAPI.GetSingleton<TerrainGenerationConfig>();
         var prefabConfig = SystemAPI.GetSingleton<TilePrefabConfig>();
-        var ecb = _ecbSystem.CreateCommandBuffer();
+
+        var clusterEntity = SystemAPI.GetSingletonEntity<BiomeCenter>();
+        var biomeCenters = SystemAPI.GetBuffer<BiomeCenter>(clusterEntity);
+        var frozenLakeCenters = SystemAPI.GetBuffer<FrozenLakeCenter>(clusterEntity);
 
         for (int x = -generationConfig.MapRadius; x <= generationConfig.MapRadius; x++)
         {
@@ -72,31 +62,31 @@ public partial struct TerrainGenerateSystem : ISystem
             }
         }
 
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
+
         state.Enabled = false; // 只运行一次
     }
 
-
-    private static float CalculateLakeInfluence(int2 pos, TerrainGenerationConfig config,
-        DynamicBuffer<FrozenLakeCenter> frozenLakeCenters)
+    private static float CalculateLakeInfluence(int2 pos, TerrainGenerationConfig config, DynamicBuffer<FrozenLakeCenter> centers)
     {
         float minDist = float.MaxValue;
-        for (int i = 0; i < frozenLakeCenters.Length; i++)
+        foreach (var c in centers)
         {
-            float dist = math.distance(pos, frozenLakeCenters[i].Position);
+            float dist = math.distance(pos, c.Position);
             if (dist < minDist)
                 minDist = dist;
         }
         return math.saturate(1 - (minDist / config.FrozenLakeRadius));
     }
 
-    private static TerrainType CalculateBiomeType(int2 pos, TerrainGenerationConfig config, 
-        DynamicBuffer<BiomeCenter> biomeCenters)
+    private static TerrainType CalculateBiomeType(int2 pos, TerrainGenerationConfig config, DynamicBuffer<BiomeCenter> centers)
     {
         float minDist = float.MaxValue;
         int index = 0;
-        for (int i = 0; i < biomeCenters.Length; i++)
+        for (int i = 0; i < centers.Length; i++)
         {
-            float dist = math.distance(pos, biomeCenters[i].Position);
+            float dist = math.distance(pos, centers[i].Position);
             if (dist < minDist)
             {
                 minDist = dist;
@@ -124,4 +114,3 @@ public partial struct TerrainGenerateSystem : ISystem
         return type == TerrainType.Frozenlake ? 0 : math.max(final, 0);
     }
 }
-
