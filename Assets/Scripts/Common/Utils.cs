@@ -28,9 +28,10 @@ public static class Utils
 
     public static Vector2 GridToWorld(int x, int y)
     {
-        return new Vector2(
+        return new Vector3(
             x * GlobalConst.GridPixelSize,
-            y * GlobalConst.GridPixelSize
+            y * GlobalConst.GridPixelSize,
+            0f
         );
     }
     #endregion

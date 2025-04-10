@@ -7,8 +7,6 @@ public class TerrainCellAuthoring : MonoBehaviour
     public float height;
 }
 
-public struct TerrainTag : IComponentData { }
-
 public class TerrainCellBaker : Baker<TerrainCellAuthoring>
 {
     public override void Bake(TerrainCellAuthoring authoring)
@@ -16,7 +14,7 @@ public class TerrainCellBaker : Baker<TerrainCellAuthoring>
         var entity = GetEntity(TransformUsageFlags.None);
         AddComponent(entity, new TerrainCell
         {
-            GridPos = Utils.WorldToGrid(authoring.transform.localPosition),
+            GridPos = Utils.WorldToGrid(authoring.transform.position),
             Height = authoring.height,
             Type = authoring.terrainType
         });

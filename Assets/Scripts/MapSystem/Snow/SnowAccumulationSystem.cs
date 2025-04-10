@@ -21,8 +21,8 @@ public partial struct SnowAccumulationSystem : ISystem
         float deltaTime = SystemAPI.Time.DeltaTime;
         float time = (float)SystemAPI.Time.ElapsedTime;
 
-        foreach (var (snow, heightmap) in
-                 SystemAPI.Query<RefRW<SnowLayer>, RefRW<Heightmap>>())
+        foreach (var (snow, heightmap, ceil) in
+                 SystemAPI.Query<RefRW<SnowLayer>, RefRW<Heightmap>, RefRW<TerrainCell>>())
         {
             // 简单噪声模拟环境变化（雪强度）
             float noise = Unity.Mathematics.noise.snoise(new float2(time * 0.05f + randomOffset, 0));
@@ -35,6 +35,7 @@ public partial struct SnowAccumulationSystem : ISystem
 
             // 更新最终高度
             heightmap.ValueRW.FinalHeight = heightmap.ValueRO.BaseHeight + snow.ValueRW.Thickness;
+            ceil.ValueRW.Height = heightmap.ValueRW.BaseHeight;
         }
     }
 }

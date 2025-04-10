@@ -15,16 +15,6 @@ MonoBehaviour:
   m_GroupName: Map
   m_GUID: 6a3c55020b2bc6547889dc8fffcb9d09
   m_SerializeEntries:
-  - m_GUID: 29245483fcd5b9a4b93387d0dbd8ec58
-    m_Address: Terrain_Base
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 4029a9e37fcec894f89757c4af067bc9
-    m_Address: Terrain
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5ca3eed91e16ed64c8d50514ab28b8b4
     m_Address: Terrain_Permafrost
     m_ReadOnly: 0
@@ -40,8 +30,18 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 90fe2913e2e1eb1468b1bbdbe54a0440
+    m_Address: Terrain_Base
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c4e33a59081586d49a1632e0b926387d
     m_Address: Terrain_Shrub
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d142696b24bdd4b4fb8a9ee379fe1da2
+    m_Address: Terrain
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

@@ -9,7 +9,6 @@ public class TerrainGridGenerator : MonoBehaviour
     [Header("基本信息")]
     public readonly int mapRadius = GlobalConst.MapRadius;
     public readonly int gridSize = GlobalConst.GridPixelSize;
-    public RectTransform gridRoot;
 
     [Header("地形参数")]
     public int BiomeCount = 4;
@@ -42,10 +41,9 @@ public class TerrainGridGenerator : MonoBehaviour
         BiomeCenters.Clear();
         FrozenLakeCenters.Clear();
 
-        float safeMargin = mapRadius * 0.7f; // 避开边界
+        float safeMargin = mapRadius * 0.7f;
         int maxTries = 20;
 
-        // 均匀散布 BiomeCenter
         while (BiomeCenters.Count < BiomeCount && maxTries-- > 0)
         {
             float angle = UnityEngine.Random.Range(0f, 360f);
@@ -54,7 +52,6 @@ public class TerrainGridGenerator : MonoBehaviour
 
             int2 candidate = new int2((int)math.round(offset.x), (int)math.round(offset.y));
 
-            // 避免太近
             bool tooClose = false;
             foreach (var center in BiomeCenters)
             {
@@ -68,7 +65,6 @@ public class TerrainGridGenerator : MonoBehaviour
             if (!tooClose) BiomeCenters.Add(candidate);
         }
 
-        // 冰湖分布（更集中地聚在中心区域）
         for (int i = 0; i < FrozenLakeCount; i++)
         {
             Vector2 offset = UnityEngine.Random.insideUnitCircle * mapRadius * 0.4f;
@@ -93,25 +89,22 @@ public class TerrainGridGenerator : MonoBehaviour
 
                 if (prefabMap.TryGetValue(type, out var prefabRef))
                 {
-                    Vector2 pos = Utils.GridToWorld(x, y);
-                    LoadAndPlace(prefabRef, pos);
+                    Vector2 worldPos = new Vector2(x * gridSize, y * gridSize);
+                    LoadAndPlace(prefabRef, worldPos, height);
                 }
             }
         }
     }
 
-    void LoadAndPlace(AssetReference prefabRef, Vector2 position)
+    void LoadAndPlace(AssetReference prefabRef, Vector2 worldPos, float height)
     {
-        prefabRef.InstantiateAsync(gridRoot).Completed += handle =>
+        prefabRef.InstantiateAsync().Completed += handle =>
         {
             if (handle.Status == AsyncOperationStatus.Succeeded)
             {
                 var go = handle.Result;
-                var rt = go.GetComponent<RectTransform>();
-                if (rt != null)
-                {
-                    rt.anchoredPosition = position;
-                }
+                go.transform.SetParent(transform, false);
+                go.transform.position = new Vector3(worldPos.x, worldPos.y, -height); // 用Z轴表示高度，视觉上有层次
             }
         };
     }
@@ -157,9 +150,7 @@ public class TerrainGridGenerator : MonoBehaviour
 
         float2 coord = new float2(pos.x * NoiseScale, pos.y * NoiseScale);
         float noiseVal = noise.snoise(coord) * MaxNoiseHeight;
-
         float smoothLake = lakeEffect * lakeEffect * (3f - 2f * lakeEffect);
-
         float final = (baseHeight + noiseVal) * (1 - smoothLake);
         if (type == TerrainType.Frozenlake) final = 0;
 
