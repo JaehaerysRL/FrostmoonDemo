@@ -6,6 +6,7 @@ Shader "Custom/Terrain"
         _Color ("Tint", Color) = (1,1,1,1)
         _SnowBlend ("Snow Coverage", Range(0,1)) = 0
         _SnowColor ("Snow Color", Color) = (0.9, 0.95, 1, 1)
+        _HeightOffset ("Height Offset", Range(-10, 10)) = 0
     }
 
     SubShader
@@ -49,6 +50,7 @@ Shader "Custom/Terrain"
             fixed4 _Color;
             float _SnowBlend;
             fixed4 _SnowColor;
+            float _HeightOffset;
 
             v2f vert(appdata_t v)
             {
@@ -56,6 +58,8 @@ Shader "Custom/Terrain"
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
                 o.color = v.color * _Color;
+                // 添加高度偏移
+                o.vertex.z += _HeightOffset;
                 return o;
             }
 

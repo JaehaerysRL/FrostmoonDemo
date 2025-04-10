@@ -58,7 +58,7 @@ MonoBehaviour:
   terrainPrefabs:
   - terrainType: 0
     prefabReference:
-      m_AssetGUID: 2c9977326b2df634aba5e33e1039fe17
+      m_AssetGUID: 818de7bfc349a1542a241802687c50f5
       m_SubObjectName: 
       m_SubObjectGUID: 
       m_SubObjectType: 

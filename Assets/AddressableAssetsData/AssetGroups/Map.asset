@@ -15,8 +15,8 @@ MonoBehaviour:
   m_GroupName: Map
   m_GUID: 6a3c55020b2bc6547889dc8fffcb9d09
   m_SerializeEntries:
-  - m_GUID: 2c9977326b2df634aba5e33e1039fe17
-    m_Address: Terrain_Tundra
+  - m_GUID: 29245483fcd5b9a4b93387d0dbd8ec58
+    m_Address: Terrain_Base
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -32,6 +32,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6b735b9c70fa2f94a9c17dc53ed35e9a
     m_Address: Terrain_Frozenlake
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 818de7bfc349a1542a241802687c50f5
+    m_Address: Terrain_Tundra
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
