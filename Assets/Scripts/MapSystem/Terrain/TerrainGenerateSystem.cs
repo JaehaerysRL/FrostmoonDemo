@@ -112,6 +112,12 @@ public partial struct TerrainGenerateSystem : ISystem
                     BaseHeight = height,
                     FinalHeight = height
                 });
+                ecb.SetComponent(tile, new TerrainCell
+                {
+                    GridPos = gridPos,
+                    Height = height,
+                    Type = type
+                }); 
             }
         }
 

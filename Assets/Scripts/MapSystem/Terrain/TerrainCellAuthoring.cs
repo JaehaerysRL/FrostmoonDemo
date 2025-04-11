@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class TerrainCellAuthoring : MonoBehaviour
@@ -14,7 +15,7 @@ public class TerrainCellBaker : Baker<TerrainCellAuthoring>
         var entity = GetEntity(TransformUsageFlags.None);
         AddComponent(entity, new TerrainCell
         {
-            GridPos = Utils.WorldToGrid(authoring.transform.position),
+            GridPos = int2.zero,
             Height = authoring.height,
             Type = authoring.terrainType
         });

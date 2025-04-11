@@ -69,7 +69,7 @@ Shader "Custom/Terrain"
                 // 高度效果 - 暖色叠加
                 fixed3 heightEffect = lerp(
                     baseColor.rgb, 
-                    _HeightColor.rgb * 2, // 暖色表现
+                    _HeightColor.rgb, // 暖色表现
                     saturate(_HeightOffset / 5.0) // 高度影响范围
                 );
                 // 雪覆盖 - 冷色混合
