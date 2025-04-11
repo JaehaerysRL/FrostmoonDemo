@@ -1,42 +1,28 @@
 using Unity.Entities;
 using UnityEngine;
-using Unity.Rendering;
-using Unity.Transforms;
 using Unity.Collections;
 
 [UpdateInGroup(typeof(PresentationSystemGroup))]
+[UpdateAfter(typeof(SnowVisualUpdateSystem))] 
 public partial class TileVisualUpdateSystem : SystemBase
 {
-    MaterialPropertyBlock block;
-    EntityQuery m_Query;
+    private MaterialPropertyBlock block;
 
     protected override void OnCreate()
     {
         block = new MaterialPropertyBlock();
-        m_Query = GetEntityQuery(
-            ComponentType.ReadOnly<TileVisualComponent>()
-        );
     }
 
     protected override void OnUpdate()
     {
-        var entities = m_Query.ToEntityArray(Allocator.Temp);
-        var visuals = m_Query.ToComponentDataArray<TileVisualComponent>(Allocator.Temp);
-
-        for (int i = 0; i < entities.Length; i++)
+        foreach (var visual in 
+            SystemAPI.Query<RefRO<TileVisualComponent>>())
         {
-            var entity = entities[i];
-            var visual = visuals[i];
-            if (!EntityManager.HasComponent<RenderMesh>(entity)) continue;
-            var renderer = EntityManager.GetComponentObject<SpriteRenderer>(visual.MeshEntity);
-            if (renderer == null) continue;
+            var renderer = EntityManager.GetComponentObject<SpriteRenderer>(visual.ValueRO.MeshEntity);
             renderer.GetPropertyBlock(block);
-            block.SetFloat("_SnowBlend", visual.SnowBlend);
-            block.SetFloat("_HeightOffset", visual.HeightOffset);
+            block.SetFloat("_SnowBlend", visual.ValueRO.SnowBlend);
+            block.SetFloat("_HeightOffset", visual.ValueRO.HeightOffset);
             renderer.SetPropertyBlock(block);
         }
-
-        entities.Dispose();
-        visuals.Dispose();
     }
 }

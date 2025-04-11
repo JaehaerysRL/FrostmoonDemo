@@ -4,45 +4,19 @@ using Unity.Mathematics;
 using Unity.Collections;
 
 [UpdateInGroup(typeof(PresentationSystemGroup))]
+[UpdateBefore(typeof(TileVisualUpdateSystem))]
 public partial class SnowVisualUpdateSystem : SystemBase
 {
-    EntityQuery m_Query;
-
-    protected override void OnCreate()
-    {
-        base.OnCreate();
-        // 只查询包含 SnowLayer, Heightmap, TileVisual 的 Entity
-        m_Query = GetEntityQuery(
-            ComponentType.ReadOnly<SnowLayer>(),
-            ComponentType.ReadOnly<Heightmap>(),
-            ComponentType.ReadOnly<TileVisualComponent>()
-        );
-    }
-
     protected override void OnUpdate()
     {
-        var entityManager = EntityManager;
-        var entities = m_Query.ToEntityArray(Allocator.Temp);
-        var snowArray = m_Query.ToComponentDataArray<SnowLayer>(Allocator.Temp);
-        var heightArray = m_Query.ToComponentDataArray<Heightmap>(Allocator.Temp);
-        var visualArray = m_Query.ToComponentDataArray<TileVisualComponent>(Allocator.Temp);
-
-        for (int i = 0; i < entities.Length; i++)
+        foreach (var (snow, heightmap, visual) in
+                 SystemAPI.Query<RefRO<SnowLayer>, RefRO<Heightmap>, RefRW<TileVisualComponent>>())
         {
-            var snow = snowArray[i];
-            var heightmap = heightArray[i];
-            var visual = visualArray[i];
+            float snowBlend = math.saturate(snow.ValueRO.Thickness / 1.5f);
+            float heightOffset = math.clamp(heightmap.ValueRO.FinalHeight, 0f, 5f);
 
-            float snowBlend = math.saturate(snow.Thickness / 1.5f);
-            float heightOffset = heightmap.FinalHeight;
-
-            visual.SnowBlend = snowBlend;
-            visual.HeightOffset = heightOffset;
+            visual.ValueRW.SnowBlend = snowBlend;
+            visual.ValueRW.HeightOffset = heightOffset;
         }
-
-        entities.Dispose();
-        snowArray.Dispose();
-        heightArray.Dispose();
-        visualArray.Dispose();
     }
 }

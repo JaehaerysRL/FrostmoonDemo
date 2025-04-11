@@ -3,27 +3,80 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Collections;
+using Unity.Serialization.Json;
+using UnityEngine;
 
+[UpdateInGroup(typeof(InitializationSystemGroup))]
 public partial struct TerrainGenerateSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<TerrainGenerationConfig>();
         state.RequireForUpdate<TilePrefabConfig>();
-        state.RequireForUpdate<BiomeCenter>();
-        state.RequireForUpdate<FrozenLakeCenter>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
+        SmartLog.Info("TerrainGenerateSystem", "OnUpdate");
+        var world = World.DefaultGameObjectInjectionWorld;
+        var entityManager = world.EntityManager;
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
         var generationConfig = SystemAPI.GetSingleton<TerrainGenerationConfig>();
         var prefabConfig = SystemAPI.GetSingleton<TilePrefabConfig>();
+        var centerEntity = entityManager.CreateEntity();
+        entityManager.AddBuffer<BiomeCenter>(centerEntity);
+        entityManager.AddBuffer<FrozenLakeCenter>(centerEntity);
+        var biomeCenters = entityManager.GetBuffer<BiomeCenter>(centerEntity);
+        var frozenLakeCenters = entityManager.GetBuffer<FrozenLakeCenter>(centerEntity);
 
-        var clusterEntity = SystemAPI.GetSingletonEntity<BiomeCenter>();
-        var biomeCenters = SystemAPI.GetBuffer<BiomeCenter>(clusterEntity);
-        var frozenLakeCenters = SystemAPI.GetBuffer<FrozenLakeCenter>(clusterEntity);
+        // 随机生成 BiomeCenter 和 FrozenLakeCenter
+        var used = new NativeList<float2>(Allocator.Temp);
+        var random = Unity.Mathematics.Random.CreateFromIndex(9966);
+        int maxAttempts = 1000; // 安全阀值
+        int currentAttempts = 0;
+        while (biomeCenters.Length < generationConfig.BiomeCount)
+        {
+            currentAttempts++;
+            // MapRadius实际是地图的XY轴长度，在范围内随机生成点
+            float x = random.NextFloat(-generationConfig.MapRadius * 0.8f, generationConfig.MapRadius * 0.8f);
+            float y = random.NextFloat(-generationConfig.MapRadius * 0.8f, generationConfig.MapRadius * 0.8f);
+            float2 offset = new float2(x, y);
+
+            bool tooClose = false;
+            foreach (var u in used)
+            {
+                if (math.distance(u, offset) < 5f)
+                {
+                    tooClose = true;
+                    break;
+                }
+            }
+
+            if (!tooClose || currentAttempts < maxAttempts)
+            {
+                biomeCenters.Add(new BiomeCenter { Position = (int2)math.round(offset) });
+                used.Add(offset);
+            }
+        }
+        // frozenLakeCenters是BiomeCenter的与 TerrainType.Frozenlake % System.Enum.GetValues(typeof(TerrainType)).Length同余的项，不够就补随机点
+        var totalTypeCount = System.Enum.GetValues(typeof(TerrainType)).Length;
+        for (int i = 0; i < generationConfig.FrozenLakeCount; i++)
+        {
+            if (biomeCenters.Length > (int)TerrainType.Frozenlake + i * totalTypeCount)
+            {
+                frozenLakeCenters.Add(new FrozenLakeCenter { Position = biomeCenters[(int)TerrainType.Frozenlake + i * totalTypeCount].Position });
+            }
+            else
+            {
+                float angle = random.NextFloat(0f, 30f);
+                float r = random.NextFloat(generationConfig.MapRadius * 0.3f, generationConfig.MapRadius);
+                float2 offset = new float2(math.cos(math.radians(angle)), math.sin(math.radians(angle))) * r;
+                frozenLakeCenters.Add(new FrozenLakeCenter { Position = (int2)math.round(offset) });
+            }
+        }
+        used.Dispose();
+        SmartLog.Info("TerrainGenerateSystem", "Calculate center done");
 
         for (int x = -generationConfig.MapRadius; x <= generationConfig.MapRadius; x++)
         {
@@ -35,7 +88,7 @@ public partial struct TerrainGenerateSystem : ISystem
                 float lakeInfluence = CalculateLakeInfluence(gridPos, generationConfig, frozenLakeCenters);
                 TerrainType type = CalculateBiomeType(gridPos, generationConfig, biomeCenters);
 
-                if (lakeInfluence > 0.9f)
+                if (lakeInfluence > 0.8f)
                     type = TerrainType.Frozenlake;
 
                 float height = CalculateFinalHeight(type, gridPos, lakeInfluence, generationConfig);
@@ -64,8 +117,10 @@ public partial struct TerrainGenerateSystem : ISystem
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
+        SmartLog.Info("TerrainGenerateSystem", "Instantiate tiles done");
 
         state.Enabled = false; // 只运行一次
+        SmartLog.Info("TerrainGenerateSystem", "OnUpdate End");
     }
 
     private static float CalculateLakeInfluence(int2 pos, TerrainGenerationConfig config, DynamicBuffer<FrozenLakeCenter> centers)

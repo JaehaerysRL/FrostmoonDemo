@@ -117,7 +117,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initialThickness: 0
-  accumulationRate: 0.01
+  accumulationRate: 0.02
   meltingRate: 0.002
 --- !u!114 &5654876445783883210
 MonoBehaviour:

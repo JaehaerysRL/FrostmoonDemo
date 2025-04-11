@@ -4,8 +4,8 @@ using Unity.Entities;
 public class TerrainGenerationConfigAuthoring : MonoBehaviour
 {
     [Header("地图尺寸")]
-    public readonly int mapRadius = GlobalConst.MapRadius;
-    public readonly int gridSize = GlobalConst.GridSize;
+    public int mapRadius = GlobalConst.MapRadius;
+    public int gridSize = GlobalConst.GridPixelSize / 100; // 这里算出来是2
 
     [Header("地形参数")]
     public int biomeCount = 12;
@@ -24,6 +24,8 @@ public class TerrainGenerationConfigAuthoring : MonoBehaviour
             {
                 MapRadius = authoring.mapRadius,
                 GridSize = authoring.gridSize,
+                BiomeCount = authoring.biomeCount,
+                FrozenLakeCount = authoring.frozenLakeCount,
                 FrozenLakeRadius = authoring.frozenLakeRadius,
                 NoiseScale = authoring.noiseScale,
                 MaxNoiseHeight = authoring.maxNoiseHeight,

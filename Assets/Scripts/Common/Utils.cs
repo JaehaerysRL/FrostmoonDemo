@@ -10,6 +10,14 @@ public static class Utils
     public static int2 WorldToGrid(Vector3 worldPos)
     {
         return new int2(
+            Mathf.FloorToInt(worldPos.x / GlobalConst.GridUnitSize),
+            Mathf.FloorToInt(worldPos.y / GlobalConst.GridUnitSize)
+        );
+    }
+
+    public static int2 UIToGrid(Vector2 worldPos)
+    {
+        return new int2(
             Mathf.FloorToInt(worldPos.x / GlobalConst.GridPixelSize),
             Mathf.FloorToInt(worldPos.y / GlobalConst.GridPixelSize)
         );
@@ -19,20 +27,20 @@ public static class Utils
     public static Vector3 GridToWorld(int2 gridPos, float height = 0)
     {
         return new Vector3(
-            gridPos.x * GlobalConst.GridPixelSize,
-            gridPos.y * GlobalConst.GridPixelSize,
+            gridPos.x * GlobalConst.GridUnitSize,
+            gridPos.y * GlobalConst.GridUnitSize,
             height
         );
 
     }
 
-    public static Vector2 GridToWorld(int x, int y)
+    public static Vector2 GridToUI(int2 gridPos)
     {
-        return new Vector3(
-            x * GlobalConst.GridPixelSize,
-            y * GlobalConst.GridPixelSize,
-            0f
+        return new Vector2(
+            gridPos.x * GlobalConst.GridPixelSize,
+            gridPos.y * GlobalConst.GridPixelSize
         );
     }
+
     #endregion
 }

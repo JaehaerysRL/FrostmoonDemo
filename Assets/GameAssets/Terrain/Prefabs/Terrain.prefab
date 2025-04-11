@@ -45,9 +45,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32f0d548a1989cc4681cac711d6f76e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mapRadius: 30
+  gridSize: 2
   biomeCount: 12
   frozenLakeCount: 3
-  frozenLakeRadius: 6
+  frozenLakeRadius: 9
   noiseScale: 0.1
   maxNoiseHeight: 0.2
   baseHeightMultiplier: 1
