@@ -1,3 +1,4 @@
+using Unity.Entities;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -16,6 +17,27 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
+        SmartLog.Info(LOG_TAG, "GameManager started.");
+        // 初始化 ECS World & Systems
+        var world = World.DefaultGameObjectInjectionWorld ?? new World("Default World");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        // 获取或创建 SimulationSystemGroup
+        var systemGroup = world.GetOrCreateSystemManaged<SimulationSystemGroup>();
+
+        // 注册子系统
+        systemGroup.AddSystemToUpdateList(world.CreateSystem<InputSystem>());
+        systemGroup.AddSystemToUpdateList(world.CreateSystem<TurnSystem>());
+        systemGroup.AddSystemToUpdateList(world.CreateSystem<CombatSystem>());
+        systemGroup.AddSystemToUpdateList(world.CreateSystem<AISystem>());
+
+        // 初始化系统组
+        DefaultWorldInitialization.Initialize("Default World", false);
+        SmartLog.Info(LOG_TAG, "ECS World and Systems initialized.");
     }
 
     public void Init()
