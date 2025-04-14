@@ -7,6 +7,5 @@ public class DemoScene : MonoBehaviour
     private void Start()
     {
         SmartLog.Info(LOG_TAG, "Demo scene started.");
-        GameManager.Instance.Init();
     }
 }

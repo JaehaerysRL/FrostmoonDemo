@@ -1,10 +1,12 @@
 using Unity.Entities;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
     const string LOG_TAG = "GameManager";
     public static GameManager Instance { get; private set; }
+    private List<IMgr> _managers = new();
 
     private void Awake()
     {
@@ -22,7 +24,22 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         SmartLog.Info(LOG_TAG, "GameManager started.");
-        // 初始化 ECS World & Systems
+
+        this.Init();
+    }
+
+    public void Init()
+    {
+        SmartLog.Info(LOG_TAG, "GameManager initialized.");
+
+        InitECSWorld();
+        InitializeManagers();
+    }
+
+    #region Initialization
+    void InitECSWorld()
+    {
+        // 创建 ECS World 和相关系统
         var world = World.DefaultGameObjectInjectionWorld ?? new World("Default World");
         World.DefaultGameObjectInjectionWorld = world;
 
@@ -37,11 +54,31 @@ public class GameManager : MonoBehaviour
 
         // 初始化系统组
         DefaultWorldInitialization.Initialize("Default World", false);
-        SmartLog.Info(LOG_TAG, "ECS World and Systems initialized.");
+
+        SmartLog.Info(LOG_TAG, "ECS World initialized.");
     }
 
-    public void Init()
+    private void InitializeManagers()
     {
-        SmartLog.Info(LOG_TAG, "GameManager initialized.");
+        // 按注册管理器
+
+        // 按优先级排序初始化
+        _managers.Sort((x, y) => x.InitPriority.CompareTo(y.InitPriority));
+        foreach (var manager in _managers)
+        {
+            manager.OnInit();
+        }
+
+        SmartLog.Info(LOG_TAG, "Managers initialized.");
     }
+
+    private void RegisterManager(IMgr manager)
+    {
+        if (manager == null || _managers.Contains(manager))
+            return;
+
+        _managers.Add(manager);
+    }
+
+    #endregion
 }
